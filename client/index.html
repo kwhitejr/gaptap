@@ -7,7 +7,9 @@
 </head>
 
 <body>
+  <div id="signIn">{{> loginButtons}}</div>
 
+  <div id="main">
   {{#if isPage 'showMain'}}
     {{> ShowMain}}
   {{/if}}
@@ -19,6 +21,7 @@
   {{#if isPage 'showTake'}}
     {{> ShowTake}}
   {{/if}}
+  </div>
 
 </body>
 
@@ -43,7 +46,7 @@
         type="text"
         name="answer"
         class="item"
-        placeholder=" answer...">
+        placeholder=" answer... or blank...">
       <button
         id="submit"
         type="submit"

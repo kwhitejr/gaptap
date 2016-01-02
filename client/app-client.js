@@ -1,12 +1,12 @@
-/*****************************************************************************/
+/**********************************************************************/
 /* Subscriptions */
-/*****************************************************************************/
+/**********************************************************************/
 
 Meteor.subscribe('puns');
 
-/*****************************************************************************/
+/**********************************************************************/
 /* Initial State */
-/*****************************************************************************/
+/*********************************************************************/
 
 Session.setDefault('page', 'showMain');
 Session.setDefault('randomPun', null);
@@ -15,18 +15,18 @@ Session.setDefault('randomPun', null);
 /* RPC (Remote Procedure Call) Methods */
 /*****************************************************************************/
 
-/*****************************************************************************/
+/********************************************************************/
 /* Global Functions */
-/*****************************************************************************/
+/**********************************************************************/
 
 function selectRandomPun () {
   var puns = Puns.find().fetch();
   Session.set('randomPun', Random.choice(puns));
 }
 
-/*****************************************************************************/
+/********************************************************************/
 /* Template Helpers */
-/*****************************************************************************/
+/**********************************************************************/
 
 Handlebars.registerHelper("randomPun", function (input) {
   return Session.get("randomPun");
@@ -50,9 +50,9 @@ Template.ShowTake.helpers({
   }
 });
 
-// /*****************************************************************************/
-// /* Template Events */
-// ***************************************************************************
+/*********************************************************************/
+/* Template Events */
+/*********************************************************************/
 
 UI.body.events({
   'click .clickChangesPage': function(event, template) {
@@ -64,26 +64,34 @@ Template.ShowGive.events({
   'submit form': function (event, template) {
     event.preventDefault();
 
+
     var form = template.find('form');
     var prompt = template.find('[name=prompt]').value;
     var answer = template.find('[name=answer]').value;
+    var username = Meteor.user().username; // || 'anon';
 
     Puns.insert({
       'prompt': prompt,
-      'answer': answer
+      'answer': answer,
+      'userId': Meteor.userId(), // | 'anon',
+      'username': username,
+      'createdAt': new Date()
     });
 
     form.reset();
-    alert('Thanks!');
+    alert('Thanks ', Meteor.userId() | 'anon');
   }
 });
-
-// Template.ShowTake.onRendered({
-
-// });
 
 Template.ShowTake.events({
   // Should load a pun when "More Pun" btn is clicked.
   'click [data-action="getPun"]': selectRandomPun
+});
 
+/**********************************************************************/
+/* Accounts */
+/*********************************************************************/
+
+Accounts.ui.config({
+  passwordSignupFields: "USERNAME_ONLY"
 });

@@ -8,6 +8,15 @@ $large: "only screen and (min-width:900px)"; */
 
 /* STYLES */
 
+#signIn{
+  position: absolute;
+  top: 15px;
+}
+
+#main{
+  position: relative;
+}
+
 html,
 body{
   height: 1%;
