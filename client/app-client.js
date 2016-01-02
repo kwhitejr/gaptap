@@ -9,15 +9,28 @@ Meteor.subscribe('puns');
 /*****************************************************************************/
 
 Session.setDefault('page', 'showMain');
-Session.setDefault('pun', null);
+Session.setDefault('randomPun', null);
 
 /*****************************************************************************/
 /* RPC (Remote Procedure Call) Methods */
 /*****************************************************************************/
 
 /*****************************************************************************/
+/* Global Functions */
+/*****************************************************************************/
+
+function selectRandomPun () {
+  var puns = Puns.find().fetch();
+  Session.set('randomPun', Random.choice(puns));
+}
+
+/*****************************************************************************/
 /* Template Helpers */
 /*****************************************************************************/
+
+Handlebars.registerHelper("randomPun", function (input) {
+  return Session.get("randomPun");
+});
 
 UI.body.helpers({
   isPage: function (page) {
@@ -29,10 +42,12 @@ Template.ShowGive.helpers({
 
 });
 
+Template.ShowTake.onCreated(selectRandomPun);
+
 Template.ShowTake.helpers({
-  // getPun: function (pun) {
-  //   return Session.equals('pun', pun);
-  // }
+  pun: function () {
+    return Session.get('randomPun');
+  }
 });
 
 // /*****************************************************************************/
@@ -69,12 +84,6 @@ Template.ShowGive.events({
 
 Template.ShowTake.events({
   // Should load a pun when "More Pun" btn is clicked.
-  'click [data-action="getPun"]': function (event, template) {
-    var array = Puns.find().fetch();
-    var randomIndex = Math.floor( Math.random() * array.length );
-    pun = array[randomIndex];
-    console.log(pun);
-    return pun;
-    // Session.set('pun', pun);
-  }
+  'click [data-action="getPun"]': selectRandomPun
+
 });
