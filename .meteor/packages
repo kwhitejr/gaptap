@@ -19,4 +19,3 @@ ecmascript              # Enable ECMAScript2015+ syntax in app code
 random
 accounts-ui
 accounts-password
-accounts-facebook
