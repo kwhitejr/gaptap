@@ -64,10 +64,16 @@ Template.ShowGive.events({
   'submit form': function (event, template) {
     event.preventDefault();
 
-
     var form = template.find('form');
     var prompt = template.find('[name=prompt]').value;
     var answer = template.find('[name=answer]').value;
+
+    if (! Meteor.userId()) {
+      alert("You must be signed in to submit!");
+      form.reset();
+      throw new Meteor.Error("You must be signed in to submit!");
+    }
+
     var username = Meteor.user().username; // || 'anon';
 
     Puns.insert({
@@ -79,7 +85,7 @@ Template.ShowGive.events({
     });
 
     form.reset();
-    alert('Thanks ', Meteor.userId() | 'anon');
+    alert('Thanks ', Meteor.user().username);
   }
 });
 
