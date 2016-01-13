@@ -14,6 +14,16 @@ Meteor.startup(function () {
     // code to run on server at startup
 });
 
+/*********************************************************************/
+/* Methods */
+/***********************************************************************/
+
+Meteor.methods({
+  insertPun: function () {}
+});
+
+
+
 /**********************************************************************/
 /* Security */
 /**********************************************************************/
@@ -23,7 +33,7 @@ Puns.allow({
   },
 
   update: function (userId, doc) {
-    return false;
+    return true;
   },
 
   remove: function (userId, doc) {

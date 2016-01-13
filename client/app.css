@@ -91,3 +91,7 @@ p.item{
 /*  background-color: #99ffcc;*/
   flex: 0 0 55%;
 }
+
+.rateit {
+  margin: 5px;
+}

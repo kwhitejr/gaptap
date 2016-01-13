@@ -62,13 +62,22 @@
       {{#with randomPun}}
         <p class="item">{{prompt}}</p>
         <p class="item">{{answer}}</p>
+
+          {{> Rating}}
+
       {{/with}}
     <button class="item btn" data-action="getPun">more pun</button>
     <button class="item btn clickChangesPage" data-page="showMain">return</button>
   </div>
 </template>
 
-<!-- <template name="Pun">
-  <p>{{prompt}}</p> <br>
-  <p>{{answer}}</p>
-</template> -->
+<template name="Rating">
+  <form class="item">
+    <input type="radio" name="rating" value="1">Egad<br>
+    <input type="radio" name="rating" value="2">OK<br>
+    <input type="radio" name="rating" value="3">Good<br>
+    <input type="radio" name="rating" value="4">Superb<br>
+    <input type="radio" name="rating" value="5">Excellent<br>
+    <input type="submit" value="Submit">
+  </form>
+</template>
