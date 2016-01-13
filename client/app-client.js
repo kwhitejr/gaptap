@@ -124,7 +124,7 @@ Template.Rating.events({
       alert("You must enter a score.");
       throw new Meteor.Error("You must enter a score.");
     } else {
-      // if (currentPun.usersWhoRated.indexOf(username) === -1) {
+      if (currentPun.usersWhoRated.indexOf(username) === -1) {
         Puns.update(
           { _id: currentPun._id},
           {
@@ -134,8 +134,8 @@ Template.Rating.events({
             }
           }
         );
-      // }
-      Session.get()
+      }
+      // Session.get()
     }
     form.reset();
 
