@@ -94,8 +94,7 @@ Template.ShowGive.events({
       'userId': Meteor.userId(), // | 'anon',
       'author': username,
       'createdAt': new Date(),
-      'ratings': [],
-      'usersWhoRated': []
+      'ratings': []
     });
 
     form.reset();
@@ -113,7 +112,7 @@ Template.Rating.events({
     event.preventDefault();
 
     var form = template.find('form');
-    var rating = template.find('input[name="rating"]:checked').value || null;
+    var rating = template.find('input[name="rating"]:checked').value;
     var currentPun = Session.get('randomPun');
     var username = Meteor.user().username || null;
 
@@ -124,13 +123,13 @@ Template.Rating.events({
       alert("You must enter a score.");
       throw new Meteor.Error("You must enter a score.");
     } else {
-      if (currentPun.usersWhoRated.indexOf(username) === -1) {
+      // edit 127 to check if 'ratings' array contains an object with property 'username'
+      if (!currentPun.ratings.username) {
         Puns.update(
           { _id: currentPun._id},
           {
             $push: {
-              ratings: rating,
-              usersWhoRated: username
+              ratings: {username: rating}
             }
           }
         );
