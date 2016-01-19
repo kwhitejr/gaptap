@@ -117,6 +117,15 @@ Template.Rating.events({
     var rating = template.find('input[name="rating"]:checked').value;
     var currentPun = Session.get('randomPun');
     var username = Meteor.user().username || null;
+    var ratingsCheck = false;
+
+    for (var i = 0; i < currentPun.ratings.length; i++) {
+      if (currentPun.ratings[i].hasOwnProperty('username')) {
+        ratingsCheck = true;
+        console.log('user found');
+      }
+    }
+
 
     if (! Meteor.userId()) {
       alert("You must be signed in to submit!");
@@ -126,7 +135,7 @@ Template.Rating.events({
       alert("You must enter a score.");
       throw new Meteor.Error("You must enter a score.");
     }
-    if (!currentPun.ratings[username]) {
+    if (Meteor.userId() && ratingsCheck === false) {
       console.log(username);
       Puns.update(
         { _id: currentPun._id},
