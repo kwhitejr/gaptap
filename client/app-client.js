@@ -59,9 +59,9 @@ Template.ShowTake.helpers({
 Template.Rating.helpers({
 });
 
-Template.Rating.rendered = function () {
-  this.$('.rateit').rateit();
-};
+// Template.Rating.rendered = function () {
+//   this.$('.rateit').rateit();
+// };
 
 /*********************************************************************/
 /* Template Events */
@@ -88,14 +88,16 @@ Template.ShowGive.events({
       throw new Meteor.Error("You must be signed in to submit!");
     }
 
-    Puns.insert({
-      'prompt': prompt,
-      'answer': answer,
-      'userId': Meteor.userId(), // | 'anon',
-      'author': username,
-      'createdAt': new Date(),
-      'ratings': []
-    });
+    if (Meteor.userId()) {
+      Puns.insert({
+        'prompt': prompt,
+        'answer': answer,
+        'userId': Meteor.userId(), // | 'anon',
+        'author': username,
+        'createdAt': new Date(),
+        'ratings': []
+      });
+    }
 
     form.reset();
     alert('Thanks ', Meteor.user().username);
@@ -119,23 +121,24 @@ Template.Rating.events({
     if (! Meteor.userId()) {
       alert("You must be signed in to submit!");
       throw new Meteor.Error("You must be signed in to submit!");
-    } else if (! rating) {
+    }
+    if (! rating) {
       alert("You must enter a score.");
       throw new Meteor.Error("You must enter a score.");
-    } else {
-      // edit 127 to check if 'ratings' array contains an object with property 'username'
-      if (!currentPun.ratings.username) {
-        Puns.update(
-          { _id: currentPun._id},
-          {
-            $push: {
-              ratings: {username: rating}
-            }
-          }
-        );
-      }
-      // Session.get()
     }
+    if (!currentPun.ratings[username]) {
+      console.log(username);
+      Puns.update(
+        { _id: currentPun._id},
+        {
+          $push: {
+            // When pushing to ratings array, the {username: rating} object treats 'username' as a string instead of a variable.
+            ratings: {username: rating}
+          }
+        }
+      );
+    }
+
     form.reset();
 
     console.log(currentPun.usersWhoRated);
