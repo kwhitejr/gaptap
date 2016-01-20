@@ -120,12 +120,13 @@ Template.Rating.events({
     var ratingsCheck = false;
 
     for (var i = 0; i < currentPun.ratings.length; i++) {
-      if (currentPun.ratings[i].hasOwnProperty('username')) {
+      if (currentPun.ratings[i].hasOwnProperty(username)) {
         ratingsCheck = true;
         console.log('user found');
       }
     }
 
+    console.log('This user has already rated the current pun: ' + ratingsCheck);
 
     if (! Meteor.userId()) {
       alert("You must be signed in to submit!");
@@ -136,13 +137,14 @@ Template.Rating.events({
       throw new Meteor.Error("You must enter a score.");
     }
     if (Meteor.userId() && ratingsCheck === false) {
-      console.log(username);
+      var ratingObj = {};
+      ratingObj[username] = rating;
       Puns.update(
         { _id: currentPun._id},
         {
           $push: {
             // When pushing to ratings array, the {username: rating} object treats 'username' as a string instead of a variable.
-            ratings: {username: rating}
+            ratings: ratingObj
           }
         }
       );
