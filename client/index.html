@@ -62,8 +62,9 @@
       {{#with randomPun}}
         <p class="item">{{prompt}}</p>
         <p class="item">{{answer}}</p>
-
+        <!-- {{#if userRated 'false'}} -->
           {{> Rating}}
+        <!-- {{/if}} -->
 
       {{/with}}
     <button class="item btn" data-action="getPun">more pun</button>

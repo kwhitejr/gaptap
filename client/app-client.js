@@ -10,6 +10,7 @@ Meteor.subscribe('puns');
 
 Session.setDefault('page', 'showMain');
 Session.setDefault('randomPun', null);
+Session.setDefault('userRated', null);
 
 /*****************************************************************************/
 /* RPC (Remote Procedure Call) Methods */
@@ -22,6 +23,24 @@ Session.setDefault('randomPun', null);
 function selectRandomPun () {
   var puns = Puns.find().fetch();
   Session.set('randomPun', Random.choice(puns));
+}
+
+function userHasRated () {
+  var currentPun = Session.get('randomPun');
+  var username = Meteor.user().username;
+  var rated = false;
+
+  if (!username) {
+    rated = true;
+  }
+
+  for (var i = 0; i < currentPun.ratings.length; i++) {
+    if (currentPun.ratings[i].hasOwnProperty(username)) {
+      rated = true;
+    }
+  }
+
+  return rated;
 }
 
 /********************************************************************/
@@ -45,23 +64,13 @@ Template.ShowGive.helpers({
 Template.ShowTake.onCreated(selectRandomPun);
 
 Template.ShowTake.helpers({
-  pun: function () {
-    return Session.get('randomPun');
-  },
 
-  rating: function () {
-    var username = Meteor.user().username;
-    var currentPun = Session.get('randomPun');
-    return currentPun.usersWhoRated.indexOf(username) < -1; // if true, user has not yet rated
-  }
 });
 
 Template.Rating.helpers({
+
 });
 
-// Template.Rating.rendered = function () {
-//   this.$('.rateit').rateit();
-// };
 
 /*********************************************************************/
 /* Template Events */
@@ -116,17 +125,11 @@ Template.Rating.events({
     var form = template.find('form');
     var rating = template.find('input[name="rating"]:checked').value;
     var currentPun = Session.get('randomPun');
-    var username = Meteor.user().username || null;
-    var ratingsCheck = false;
+    var username = Meteor.user().username;
+    var rated = userHasRated();
 
-    for (var i = 0; i < currentPun.ratings.length; i++) {
-      if (currentPun.ratings[i].hasOwnProperty(username)) {
-        ratingsCheck = true;
-        console.log('user found');
-      }
-    }
 
-    console.log('This user has already rated the current pun: ' + ratingsCheck);
+    console.log('This user has already rated the current pun: ' + rated);
 
     if (! Meteor.userId()) {
       alert("You must be signed in to submit!");
@@ -136,7 +139,7 @@ Template.Rating.events({
       alert("You must enter a score.");
       throw new Meteor.Error("You must enter a score.");
     }
-    if (Meteor.userId() && ratingsCheck === false) {
+    if (Meteor.userId() && rated === false) {
       var ratingObj = {};
       ratingObj[username] = rating;
       Puns.update(
