@@ -10,30 +10,30 @@
   <div id="signIn">{{> loginButtons}}</div>
 
   <div id="main">
-  {{#if isPage 'showMain'}}
-    {{> ShowMain}}
+  {{#if isPage 'Main'}}
+    {{> Main}}
   {{/if}}
 
-  {{#if isPage 'showGive'}}
-    {{> ShowGive}}
+  {{#if isPage 'Give'}}
+    {{> Give}}
   {{/if}}
 
-  {{#if isPage 'showTake'}}
-    {{> ShowTake}}
+  {{#if isPage 'Take'}}
+    {{> Take}}
   {{/if}}
   </div>
 
 </body>
 
-<template name="ShowMain">
+<template name="Main">
   <div class="container">
     <h1 class="item">welcome to gaptap</h1>
-    <button class="item btn clickChangesPage" data-page="showGive">give a pun</button>
-    <button class="item btn clickChangesPage" data-page="showTake">take a pun</button>
+    <button class="item btn clickChangesPage" data-page="Give">give a pun</button>
+    <button class="item btn clickChangesPage" data-page="Take">take a pun</button>
   </div>
 </template>
 
-<template name="ShowGive">
+<template name="Give">
   <div class="container">
     <h1 class="item">give a pun</h1>
     <form class="item container">
@@ -52,23 +52,22 @@
         type="submit"
         class="item btn">submit!</button>
     </form>
-    <button class="item btn clickChangesPage" data-page="showMain">return</button>
+    <button class="item btn clickChangesPage" data-page="Main">return</button>
   </div>
 </template>
 
-<template name="ShowTake">
+<template name="Take">
   <div class="container">
     <h1 class="item">take a pun</h1>
       {{#with randomPun}}
         <p class="item">{{prompt}}</p>
         <p class="item">{{answer}}</p>
-        <!-- {{#if userRated 'false'}} -->
-          {{> Rating}}
-        <!-- {{/if}} -->
-
       {{/with}}
+      {{#if isRated}}
+        {{> Rating}}
+      {{/if}}
     <button class="item btn" data-action="getPun">more pun</button>
-    <button class="item btn clickChangesPage" data-page="showMain">return</button>
+    <button class="item btn clickChangesPage" data-page="Main">return</button>
   </div>
 </template>
 

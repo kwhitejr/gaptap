@@ -8,9 +8,15 @@ Meteor.subscribe('puns');
 /* Initial State */
 /*********************************************************************/
 
-Session.setDefault('page', 'showMain');
+Session.setDefault('page', 'Main');
 Session.setDefault('randomPun', null);
-Session.setDefault('userRated', null);
+
+if (Meteor.userId()) {
+  Tracker.autorun(function () {
+    Session.set('rated', userHasRated());
+  });
+}
+
 
 /*****************************************************************************/
 /* RPC (Remote Procedure Call) Methods */
@@ -24,6 +30,15 @@ function selectRandomPun () {
   var puns = Puns.find().fetch();
   Session.set('randomPun', Random.choice(puns));
 }
+
+// function ratingDisplay () {
+//   var whetherRated = userHasRated();
+//   if (whetherRated === true) {
+//     Session.set('rated', 'rated');
+//   } else {
+//     Session.set('rated', 'notRated');
+//   }
+// }
 
 function userHasRated () {
   var currentPun = Session.get('randomPun');
@@ -51,20 +66,26 @@ Handlebars.registerHelper('randomPun', function (input) {
   return Session.get('randomPun');
 });
 
+Handlebars.registerHelper('isRated', function (input) {
+  return Session.get('rated');
+});
+
 UI.body.helpers({
   isPage: function (page) {
     return Session.equals('page', page);
   }
 });
 
-Template.ShowGive.helpers({
+Template.Give.helpers({
 
 });
 
-Template.ShowTake.onCreated(selectRandomPun);
+Template.Take.onCreated(selectRandomPun);
 
-Template.ShowTake.helpers({
-
+Template.Take.helpers({
+  isRated: function () {
+    return Session.get('rated');
+  }
 });
 
 Template.Rating.helpers({
@@ -82,14 +103,10 @@ UI.body.events({
   }
 });
 
-Template.ShowGive.events({
+Template.Give.events({
   'submit form': function (event, template) {
     event.preventDefault();
-
     var form = template.find('form');
-    var prompt = template.find('[name=prompt]').value;
-    var answer = template.find('[name=answer]').value;
-    var username = Meteor.user().username; // || 'anon';
 
     if (! Meteor.userId()) {
       alert("You must be signed in to submit!");
@@ -98,6 +115,10 @@ Template.ShowGive.events({
     }
 
     if (Meteor.userId()) {
+      var prompt = template.find('[name=prompt]').value;
+      var answer = template.find('[name=answer]').value;
+      var username = Meteor.user().username; // || 'anon';
+
       Puns.insert({
         'prompt': prompt,
         'answer': answer,
@@ -106,16 +127,19 @@ Template.ShowGive.events({
         'createdAt': new Date(),
         'ratings': []
       });
+
+      form.reset();
     }
 
-    form.reset();
     alert('Thanks ', Meteor.user().username);
   }
 });
 
-Template.ShowTake.events({
+Template.Take.events({
   // Should load a pun when "More Pun" btn is clicked.
-  'click [data-action="getPun"]': selectRandomPun
+  'click [data-action="getPun"]': function () {
+    selectRandomPun();
+  }
 });
 
 Template.Rating.events({
@@ -146,7 +170,6 @@ Template.Rating.events({
         { _id: currentPun._id},
         {
           $push: {
-            // When pushing to ratings array, the {username: rating} object treats 'username' as a string instead of a variable.
             ratings: ratingObj
           }
         }
@@ -155,7 +178,6 @@ Template.Rating.events({
 
     form.reset();
 
-    console.log(currentPun.usersWhoRated);
     console.log(Session.get('randomPun').ratings);
 
     // alert('Thanks ', Meteor.user().username);
